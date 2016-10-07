@@ -33,6 +33,7 @@ from ansible.plugins.action import ActionBase
 from ansible.utils.hashing import checksum_s
 from ansible.utils.boolean import boolean
 from ansible.module_utils.urls import fetch_url
+from ansible.module_utils.pycompat24 import get_exception
 
 ############################################################################
 ############################################################################
@@ -202,7 +203,8 @@ class ActionModule(ActionBase):
 
             return template_data
 
-        except AnsibleError as e:
+        except AnsibleError:
+            e = get_exception()
             result['failed'] = True
             result['msg'] = to_native(e)
             return None
@@ -229,7 +231,8 @@ class ActionModule(ActionBase):
             self._templar.set_available_variables(temp_vars)
             resultant = self._templar.template(template_data, preserve_trailing_newlines=True, escape_backslashes=False, convert_data=False)
             self._templar.set_available_variables(old_vars)
-        except Exception as e:
+        except Exception:
+            e = get_exception()
             result['failed'] = True
             result['msg'] = type(e).__name__ + ": " + str(e)
             return None
