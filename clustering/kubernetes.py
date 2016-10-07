@@ -83,7 +83,7 @@ EXAMPLES = '''
 # Create a kubernetes namespace from file
 - name: Create a kubernetes namespace from file
   kubernetes:
-    api_endpoint: kube-master.ddops.cool
+    api_endpoint: example.com
     token: redacted
     template: ns.yml
     state: present
@@ -91,7 +91,7 @@ EXAMPLES = '''
 # Create a kubernetes namespace from template
 - name: Create a kubernetes namespace from template
   kubernetes:
-    api_endpoint: kube-master.ddops.cool
+    api_endpoint: example.com
     username: admin
     password: redacted
     template: ns.yml.j2
@@ -102,7 +102,7 @@ EXAMPLES = '''
 # Create a kubernetes namespace from inline
 - name: Create a kubernetes namespace from inline
   kubernetes:
-    api_endpoint: kube-master.ddops.cool
+    api_endpoint: example.com
     token: redacted
     inline:
         kind: Namespace
