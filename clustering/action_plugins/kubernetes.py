@@ -194,8 +194,11 @@ class ActionModule(ActionBase):
         try:
             source = self._find_needle('templates', source)
             b_source = to_bytes(source)
-            with open(b_source, 'r') as f:
+            f = open(b_source, 'r')
+            try:
                 template_data = to_text(f.read())
+            finally:
+               f.close()
 
             return template_data
 
