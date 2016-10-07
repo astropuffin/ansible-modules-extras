@@ -240,9 +240,10 @@ class ActionModule(ActionBase):
 
         try:
             data = yaml.load(resultant)
-        except yaml.YAMLError, exc:
-            if hasattr(exc, 'problem_mark'):
-                mark = exc.problem_mark
+        except yaml.YAMLError:
+            e = get_exception()
+            if hasattr(e, 'problem_mark'):
+                mark = e.problem_mark
                 result['failed'] = True
                 result['msg'] = "Error parsing YAML: error position: (%s:%s)" % (mark.line+1, mark.column+1)
             else:
