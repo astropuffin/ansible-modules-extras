@@ -75,8 +75,7 @@ options:
         only be used when execuing the M('kubernetes') module local to the Kubernetes
         cluster using the insecure local port (locahost:8080 by default)."
 
-author: "Eric Johnson (@erjohnso) <erjohnso@google.com>"
-        "adapted by Joe schneider (@astropuffin) <j2@dronedeploy.com>"
+author: "Eric Johnson (@erjohnso) <erjohnso@google.com>, adapted by Joe schneider (@astropuffin) <j2@dronedeploy.com>"
 '''
 
 EXAMPLES = '''
