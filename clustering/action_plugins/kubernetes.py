@@ -36,7 +36,7 @@ from ansible.module_utils.urls import fetch_url
 
 ############################################################################
 ############################################################################
-# For API coverage, this Anislbe module provides capability to operate on
+# For API coverage, this Ansible module provides capability to operate on
 # all Kubernetes objects that support a "create" call (except for 'Events').
 # In order to obtain a valid list of Kubernetes objects, the v1 spec file
 # was referenced and the below python script was used to parse the JSON
