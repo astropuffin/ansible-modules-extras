@@ -93,8 +93,6 @@ USER_AGENT = "ansible-k8s-module/0.0.1"
 class ActionModule(ActionBase):
 
     def api_request(self, result, url, method="GET", headers=None, data=None, auth=None):
-        #TODO: add basic auth
-        #r = requests.get(url, auth=('user', 'pass'))
         body = None
         if data:
             data = json.dumps(data)
