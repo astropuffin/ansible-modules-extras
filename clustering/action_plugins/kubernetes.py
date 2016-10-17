@@ -14,7 +14,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Ansible.  If not, see <http://www.gnu.org/licenses/>.
-#from __future__ import (absolute_import, division, print_function)
 from __future__ import division
 __metaclass__ = type
 
@@ -36,46 +35,10 @@ from ansible.utils.boolean import boolean
 from ansible.module_utils.urls import fetch_url
 from ansible.module_utils.pycompat24 import get_exception
 
-############################################################################
-############################################################################
-# For API coverage, this Ansible module provides capability to operate on
-# all Kubernetes objects that support a "create" call (except for 'Events').
-# In order to obtain a valid list of Kubernetes objects, the v1 spec file
-# was referenced and the below python script was used to parse the JSON
-# spec file, extract only the objects with a description starting with
-# 'create a'. The script then iterates over all of these base objects
-# to get the endpoint URL and was used to generate the KIND_URL map.
-#
-# import json
-# from urllib2 import urlopen
-#
-# r = urlopen("https://raw.githubusercontent.com/kubernetes"
-#            "/kubernetes/master/api/swagger-spec/v1.json")
-# v1 = json.load(r)
-#
-# apis = {}
-# for a in v1['apis']:
-#     p = a['path']
-#     for o in a['operations']:
-#         if o["summary"].startswith("create a") and o["type"] != "v1.Event":
-#             apis[o["type"]] = p
-#
-# def print_kind_url_map():
-#     results = []
-#     for a in apis.keys():
-#         results.append('"%s": "%s"' % (a[3:].lower(), apis[a]))
-#     results.sort()
-#     print "KIND_URL = {"
-#     print ",\n".join(results)
-#     print "}"
-#
-# if __name__ == '__main__':
-#     print_kind_url_map()
-############################################################################
-############################################################################
-
 KIND_URL = {
     "binding": "/api/v1/namespaces/{namespace}/bindings",
+    "daemonset": "/apis/extensions/v1beta1/namespaces/{namespace}/daemonsets",
+    "deployment": "/apis/extensions/v1beta1/namespaces/{namespace}/deployments",
     "endpoints": "/api/v1/namespaces/{namespace}/endpoints",
     "limitrange": "/api/v1/namespaces/{namespace}/limitranges",
     "namespace": "/api/v1/namespaces",
@@ -192,7 +155,7 @@ class ActionModule(ActionBase):
         return True, body
 
 
-    def get_template_source(self, filepath):
+    def get_template_source(self, filepath, result):
         try:
             source = self._find_needle('templates', source)
             b_source = to_bytes(source)
@@ -210,9 +173,9 @@ class ActionModule(ActionBase):
             result['msg'] = to_native(e)
             return None
 
-    def template(self, template_path, task_vars):
+    def template(self, template_path, result, task_vars):
         try:
-            template_data = self.get_template_source(template_path)
+            template_data = self.get_template_source(template_path, result)
 
             temp_vars = task_vars.copy()
             temp_vars['template_host']     = os.uname()[1]
@@ -294,7 +257,7 @@ class ActionModule(ActionBase):
 
         if template_path is not None or inline is not None:
             if template_path is not None:
-                data = self.template(template_path, task_vars)
+                data = self.template(template_path, result, task_vars)
             else:
                 data = inline
         else:
@@ -328,6 +291,7 @@ class ActionModule(ActionBase):
                 except KeyError:
                     result['failed'] = True
                     result['msg'] = "invalid resource kind specified in the data: '%s'" % kind
+                    return result
                 url = url.replace("{namespace}", namespace)
             else:
                 url = target_endpoint
